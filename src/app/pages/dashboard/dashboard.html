@@ -1,80 +1,104 @@
 <div class="p-6">
 
+  <div class="flex flex-wrap gap-3">
 
-    <div class="flex gap-3">
+    <input
+      type="password"
+      placeholder="Enter API Key"
+      class="border rounded-lg px-4 py-2 w-full max-w-xl"
+      [value]="apiKey()"
+      (input)="apiKey.set($any($event.target).value)"
+    />
 
-        <input
-            type="password"
-            placeholder="Enter API Key"
-            class="border rounded-lg px-4 py-2 w-96"
-            [value]="apiKey()"
-            (input)="apiKey.set($any($event.target).value)"
-        />
+    <button
+      class="bg-black text-white px-5 py-2 rounded-lg"
+      (click)="checkStatus()"
+    >
+      Check Status
+    </button>
 
+  </div>
 
-        <button
-            class="bg-black text-white px-5 py-2 rounded-lg"
-            (click)="checkStatus()"
-        >
-            Check Status
-        </button>
+  <p class="mt-5 text-xl font-semibold">
+    {{ status() }}
+  </p>
 
+  <div class="monitor-list mt-8">
 
-    </div>
+    @for (service of monitors(); track service.name) {
+      <div class="monitor-list__item">
 
+        <div class="monitor-list__logo" aria-hidden="true">
+          <span>Logo</span>
+        </div>
 
-    <p class="mt-5 text-xl font-semibold">
-        {{ status() }}
-    </p>
+        <div class="monitor-list__content">
 
+          <div class="monitor-list__top">
+            <h2 class="monitor-list__title">{{ service.name }}</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            @if (service.healthy) {
+              <span class="monitor-list__badge monitor-list__badge--up">UP</span>
+            } @else {
+              <span class="monitor-list__badge monitor-list__badge--down">DOWN</span>
+            }
+          </div>
 
-
-        @for(service of monitors(); track service.name) {
-
-            <div class="border rounded-xl p-5">
-
-                <div class="flex justify-between">
-
-                    <h2 class="font-bold">
-                        {{service.name}}
-                    </h2>
-
-
-                    @if(service.healthy) {
-
-                        <span class="text-green-600">
-                            UP
-                        </span>
-
-                    } @else {
-
-                        <span class="text-red-600">
-                            DOWN
-                        </span>
-
-                    }
-
-                </div>
-
-
-                <p class="mt-3">
-                    {{service.message}}
-                </p>
-
-
-                <p>
-                    {{service.responseTime}} ms
-                </p>
-
-
+          <div class="monitor-list__meta">
+            <div class="monitor-list__row">
+              <span>Latency</span>
+              <strong>{{ service.responseTime }} ms</strong>
             </div>
 
-        }
+            <div class="monitor-list__message">
+              {{ service.message }}
+            </div>
+          </div>
 
+          <div class="monitor-list__history">
+            <div class="monitor-list__history-label">History (latest {{ MAX_HISTORY }})</div>
+            <div class="monitor-list__history-bars">
+              @for (state of getHistoryBars(service.history); track $index) {
+                <span
+                  class="monitor-list__history-bar"
+                  [class.monitor-list__history-bar--up]="state"
+                  [class.monitor-list__history-bar--down]="!state"
+                ></span>
+              }
 
-    </div>
+              @for (placeholder of getHistoryPlaceholderBars(service.history); track placeholder) {
+                <span class="monitor-list__history-bar monitor-list__history-bar--placeholder"></span>
+              }
+            </div>
+          </div>
 
+          @if (service.details && (service.details | keyvalue)?.length) {
+            <div class="monitor-list__actions">
+              <button
+                type="button"
+                class="monitor-list__details-btn"
+                (click)="toggleDetails(service.name)"
+              >
+                {{ expandedDetails()[service.name] ? 'Hide details' : 'Show details' }}
+              </button>
+            </div>
+          }
+
+          @if (expandedDetails()[service.name]) {
+            <div class="monitor-list__details">
+              <div class="monitor-list__details-title">All available details</div>
+
+              @for (detail of getDetailsSummary(service); track detail) {
+                <div class="monitor-list__detail-item">{{ detail }}</div>
+              }
+            </div>
+          }
+
+        </div>
+
+      </div>
+    }
+
+  </div>
 
 </div>

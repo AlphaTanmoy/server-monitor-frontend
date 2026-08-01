@@ -1,4 +1,4 @@
-const shouldCallBackendServer = false; // Set this to true if you want to call the backend server, false for local development
+const shouldCallBackendServer = true; // Set this to true if you want to call the backend server, false for local development
 
 export const environment = {
   production: false,

@@ -9,6 +9,3 @@ export const environment = {
   pollingInterval: 5000,
   apiKeyHeader: 'X-ShivaAI-Monitor-Key'
 };
-
-
-//G2nz5weqWfiXvKmo2Y2afDt62YTi2anVXusSL5uj90g1vHKG5q

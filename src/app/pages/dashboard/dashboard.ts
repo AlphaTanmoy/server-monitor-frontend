@@ -44,6 +44,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
   readonly modalApiKey = signal('');
 
+  readonly isApiKeyVisible = signal(false);
+
   readonly MAX_HISTORY = 15;
 
   readonly particles: ParticleConfig[] = Array.from({ length: 18 }, (_, index) => ({
@@ -103,12 +105,23 @@ export class Dashboard implements OnInit, OnDestroy {
 
   openApiKeyModal(): void {
     this.modalApiKey.set('');
+    this.isApiKeyVisible.set(false);
     this.isApiKeyModalOpen.set(true);
   }
 
   closeApiKeyModal(): void {
     this.isApiKeyModalOpen.set(false);
+    this.isApiKeyVisible.set(false);
     this.modalApiKey.set('');
+  }
+
+  cancelApiKeyModal(): void {
+    this.closeApiKeyModal();
+    this.router.navigate(['/']);
+  }
+
+  toggleApiKeyVisibility(): void {
+    this.isApiKeyVisible.set(!this.isApiKeyVisible());
   }
 
   confirmApiKey(): void {
@@ -273,7 +286,15 @@ export class Dashboard implements OnInit, OnDestroy {
     const details = service.details ?? {};
 
     return Object.entries(details)
-      .map(([key, value]) => `${key}: ${this.formatDetailValue(value)}`);
+      .map(([key, value]) => {
+        const formattedValue = this.formatDetailValue(value);
+
+        if (Array.isArray(value) && value.length > 0) {
+          return `${key}:\n${formattedValue}`;
+        }
+
+        return `${key}: ${formattedValue}`;
+      });
   }
 
   private formatDetailValue(value: unknown): string {
@@ -282,14 +303,62 @@ export class Dashboard implements OnInit, OnDestroy {
     }
 
     if (Array.isArray(value)) {
-      return value.length > 0 ? JSON.stringify(value.slice(0, 3)) : '[]';
+      if (value.length === 0) {
+        return '[]';
+      }
+
+      if (value.every(item => item && typeof item === 'object' && !Array.isArray(item))) {
+        return value
+          .map((item, index) => `${index + 1}. ${this.formatDiskObject(item as Record<string, unknown>)}`)
+          .join('\n');
+      }
+
+      return value.map((item, index) => `${index + 1}. ${this.formatDetailValue(item)}`).join('\n');
     }
 
     if (value && typeof value === 'object') {
+      if (this.isDiskObject(value)) {
+        return this.formatDiskObject(value as Record<string, unknown>);
+      }
+
       return JSON.stringify(value, null, 2);
     }
 
     return String(value);
+  }
+
+  private isDiskObject(value: unknown): value is Record<string, unknown> {
+    return !!value && typeof value === 'object' && (
+      'totalGB' in value ||
+      'usedGB' in value ||
+      'freeGB' in value ||
+      'mount' in value ||
+      'type' in value
+    );
+  }
+
+  private formatDiskObject(value: Record<string, unknown>): string {
+    const name = this.safeString(value['name']) || 'disk';
+    const type = this.safeString(value['type']) || 'unknown';
+    const mount = this.safeString(value['mount']) || 'n/a';
+    const total = this.safeString(value['totalGB']) || this.safeString(value['totalBytes']) || '0';
+    const used = this.safeString(value['usedGB']) || this.safeString(value['usedBytes']) || '0';
+    const free = this.safeString(value['freeGB']) || this.safeString(value['freeBytes']) || '0';
+    const usage = this.safeString(value['usage']) || '0';
+
+    return `${name} | type=${type} | mount=${mount} | total=${total} | used=${used} | free=${free} | usage=${usage}%`;
+  }
+
+  private safeString(value: unknown): string {
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    return '';
   }
 
 }

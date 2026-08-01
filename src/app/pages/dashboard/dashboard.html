@@ -37,19 +37,31 @@
         <div class="api-key-modal__dialog">
           <div class="api-key-modal__title">Enter API Key</div>
 
-          <input
-            type="password"
-            class="api-key-modal__input"
-            placeholder="Paste your API key"
-            [value]="modalApiKey()"
-            (input)="modalApiKey.set($any($event.target).value)"
-          />
+          <div class="api-key-modal__input-wrapper">
+            <input
+              [type]="isApiKeyVisible() ? 'text' : 'password'"
+              class="api-key-modal__input"
+              placeholder="Paste your API key"
+              [value]="modalApiKey()"
+              (input)="modalApiKey.set($any($event.target).value)"
+            />
+
+            <button
+              type="button"
+              class="api-key-modal__visibility-toggle"
+              [attr.aria-label]="isApiKeyVisible() ? 'Hide API key' : 'Show API key'"
+              [attr.aria-pressed]="isApiKeyVisible()"
+              (click)="toggleApiKeyVisibility()"
+            >
+              <i class="bi" [class.bi-eye]="!isApiKeyVisible()" [class.bi-eye-slash]="isApiKeyVisible()"></i>
+            </button>
+          </div>
 
           <div class="api-key-modal__actions">
             <button
               type="button"
               class="api-key-modal__cancel"
-              (click)="closeApiKeyModal()"
+              (click)="cancelApiKeyModal()"
             >
               Cancel
             </button>

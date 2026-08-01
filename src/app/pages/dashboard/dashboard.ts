@@ -242,6 +242,24 @@ export class Dashboard implements OnInit, OnDestroy {
     });
   }
 
+  getServiceLogo(serviceName: string): string {
+    const normalizedName = serviceName.trim().toLowerCase();
+    const logoMap: Record<string, string> = {
+      cloudflared: 'cloudflared.png',
+      ollama: 'ollama.png',
+      postgresql: 'pstgres.png',
+      rabbitmq: 'rabbit.png',
+      redis: 'redis.png',
+      'shivaai health': 'shiva.png',
+      ufw: 'ufw.png',
+      cpu: 'cpu.png',
+      disk: 'storage.png',
+      memory: 'memory.png'
+    };
+
+    return `/${logoMap[normalizedName] ?? 'favicon.ico'}`;
+  }
+
   getHistoryBars(history: boolean[]): boolean[] {
     return history.slice(-this.MAX_HISTORY);
   }

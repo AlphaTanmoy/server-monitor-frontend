@@ -30,10 +30,6 @@
       </button>
     </div>
 
-    <p class="mt-5 text-xl font-semibold">
-      {{ status() }}
-    </p>
-
     @if (isApiKeyModalOpen()) {
       <div class="api-key-modal" role="dialog" aria-modal="true">
         <div class="api-key-modal__backdrop" (click)="closeApiKeyModal()"></div>
@@ -76,7 +72,11 @@
         <div class="monitor-list__item">
 
           <div class="monitor-list__logo" aria-hidden="true">
-            <span>Logo</span>
+            <img
+              class="monitor-list__logo-image"
+              [src]="getServiceLogo(service.name)"
+              [alt]="service.name + ' logo'"
+            />
           </div>
 
           <div class="monitor-list__content">

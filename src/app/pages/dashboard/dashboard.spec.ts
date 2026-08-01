@@ -24,7 +24,7 @@ describe('Dashboard', () => {
     component.openApiKeyModal();
     fixture.detectChanges();
 
-    expect(component.isApiKeyVisible()).toBeFalse();
+    expect(component.isApiKeyVisible()).toBe(false);
 
     const input = fixture.nativeElement.querySelector('.api-key-modal__input') as HTMLInputElement;
     expect(input.type).toBe('password');
@@ -32,7 +32,7 @@ describe('Dashboard', () => {
     component.toggleApiKeyVisibility();
     fixture.detectChanges();
 
-    expect(component.isApiKeyVisible()).toBeTrue();
+    expect(component.isApiKeyVisible()).toBe(true);
     expect((fixture.nativeElement.querySelector('.api-key-modal__input') as HTMLInputElement).type).toBe('text');
   });
 

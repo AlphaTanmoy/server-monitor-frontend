@@ -1,0 +1,24 @@
+<section class="landing-screen">
+  <div class="landing-screen__backdrop" aria-hidden="true">
+    <div class="landing-screen__grid"></div>
+
+    @for (particle of particles; track $index) {
+      <span
+        class="landing-screen__particle"
+        [style.left.%]="particle.left"
+        [style.top.%]="particle.top"
+        [style.width.px]="particle.size"
+        [style.height.px]="particle.size"
+        [style.animation-delay.s]="particle.delay"
+        [style.animation-duration.s]="particle.duration"
+        [style.background]="particle.background"
+      ></span>
+    }
+  </div>
+
+  <div class="landing-screen__content">
+    <p class="landing-screen__tag">Realtime health overview</p>
+    <h1 class="landing-screen__title">Server Monitoring System</h1>
+    <a class="landing-screen__button" routerLink="/dashboard">Check Status</a>
+  </div>
+</section>

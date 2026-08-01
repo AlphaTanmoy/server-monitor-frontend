@@ -1,104 +1,152 @@
-<div class="p-6">
+<div class="dashboard-screen">
+  <div class="dashboard-screen__backdrop" aria-hidden="true">
+    <div class="dashboard-screen__grid"></div>
 
-  <div class="flex flex-wrap gap-3">
-
-    <input
-      type="password"
-      placeholder="Enter API Key"
-      class="border rounded-lg px-4 py-2 w-full max-w-xl"
-      [value]="apiKey()"
-      (input)="apiKey.set($any($event.target).value)"
-    />
-
-    <button
-      class="bg-black text-white px-5 py-2 rounded-lg"
-      (click)="checkStatus()"
-    >
-      Check Status
-    </button>
-
+    @for (particle of particles; track $index) {
+      <span
+        class="dashboard-screen__particle"
+        [style.left.%]="particle.left"
+        [style.top.%]="particle.top"
+        [style.width.px]="particle.size"
+        [style.height.px]="particle.size"
+        [style.animation-delay.s]="particle.delay"
+        [style.animation-duration.s]="particle.duration"
+        [style.background]="particle.background"
+      ></span>
+    }
   </div>
 
-  <p class="mt-5 text-xl font-semibold">
-    {{ status() }}
-  </p>
+  <div class="dashboard-screen__content p-6">
 
-  <div class="monitor-list mt-8">
+    <div class="dashboard-screen__heading-row">
+      <h1 class="text-2xl font-bold mb-4">Server Monitoring System</h1>
 
-    @for (service of monitors(); track service.name) {
-      <div class="monitor-list__item">
+      <button
+        type="button"
+        class="dashboard-screen__back-button"
+        (click)="goBackToLanding()"
+      >
+        Go Back
+      </button>
+    </div>
 
-        <div class="monitor-list__logo" aria-hidden="true">
-          <span>Logo</span>
+    <p class="mt-5 text-xl font-semibold">
+      {{ status() }}
+    </p>
+
+    @if (isApiKeyModalOpen()) {
+      <div class="api-key-modal" role="dialog" aria-modal="true">
+        <div class="api-key-modal__backdrop" (click)="closeApiKeyModal()"></div>
+
+        <div class="api-key-modal__dialog">
+          <div class="api-key-modal__title">Enter API Key</div>
+
+          <input
+            type="password"
+            class="api-key-modal__input"
+            placeholder="Paste your API key"
+            [value]="modalApiKey()"
+            (input)="modalApiKey.set($any($event.target).value)"
+          />
+
+          <div class="api-key-modal__actions">
+            <button
+              type="button"
+              class="api-key-modal__cancel"
+              (click)="closeApiKeyModal()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              class="api-key-modal__confirm"
+              (click)="confirmApiKey()"
+            >
+              Continue
+            </button>
+          </div>
         </div>
-
-        <div class="monitor-list__content">
-
-          <div class="monitor-list__top">
-            <h2 class="monitor-list__title">{{ service.name }}</h2>
-
-            @if (service.healthy) {
-              <span class="monitor-list__badge monitor-list__badge--up">UP</span>
-            } @else {
-              <span class="monitor-list__badge monitor-list__badge--down">DOWN</span>
-            }
-          </div>
-
-          <div class="monitor-list__meta">
-            <div class="monitor-list__row">
-              <span>Latency</span>
-              <strong>{{ service.responseTime }} ms</strong>
-            </div>
-
-            <div class="monitor-list__message">
-              {{ service.message }}
-            </div>
-          </div>
-
-          <div class="monitor-list__history">
-            <div class="monitor-list__history-label">History (latest {{ MAX_HISTORY }})</div>
-            <div class="monitor-list__history-bars">
-              @for (state of getHistoryBars(service.history); track $index) {
-                <span
-                  class="monitor-list__history-bar"
-                  [class.monitor-list__history-bar--up]="state"
-                  [class.monitor-list__history-bar--down]="!state"
-                ></span>
-              }
-
-              @for (placeholder of getHistoryPlaceholderBars(service.history); track placeholder) {
-                <span class="monitor-list__history-bar monitor-list__history-bar--placeholder"></span>
-              }
-            </div>
-          </div>
-
-          @if (service.details && (service.details | keyvalue)?.length) {
-            <div class="monitor-list__actions">
-              <button
-                type="button"
-                class="monitor-list__details-btn"
-                (click)="toggleDetails(service.name)"
-              >
-                {{ expandedDetails()[service.name] ? 'Hide details' : 'Show details' }}
-              </button>
-            </div>
-          }
-
-          @if (expandedDetails()[service.name]) {
-            <div class="monitor-list__details">
-              <div class="monitor-list__details-title">All available details</div>
-
-              @for (detail of getDetailsSummary(service); track detail) {
-                <div class="monitor-list__detail-item">{{ detail }}</div>
-              }
-            </div>
-          }
-
-        </div>
-
       </div>
     }
 
-  </div>
+    <div class="monitor-list mt-8">
 
+      @for (service of monitors(); track service.name) {
+        <div class="monitor-list__item">
+
+          <div class="monitor-list__logo" aria-hidden="true">
+            <span>Logo</span>
+          </div>
+
+          <div class="monitor-list__content">
+
+            <div class="monitor-list__top">
+              <h2 class="monitor-list__title">{{ service.name }}</h2>
+
+              @if (service.healthy) {
+                <span class="monitor-list__badge monitor-list__badge--up">UP</span>
+              } @else {
+                <span class="monitor-list__badge monitor-list__badge--down">DOWN</span>
+              }
+            </div>
+
+            <div class="monitor-list__meta">
+              <div class="monitor-list__row">
+                <span>Latency</span>
+                <strong>{{ service.responseTime }} ms</strong>
+              </div>
+
+              <div class="monitor-list__message">
+                {{ service.message }}
+              </div>
+            </div>
+
+            <div class="monitor-list__history">
+              <div class="monitor-list__history-label">History (latest {{ MAX_HISTORY }})</div>
+              <div class="monitor-list__history-bars">
+                @for (state of getHistoryBars(service.history); track $index) {
+                  <span
+                    class="monitor-list__history-bar"
+                    [class.monitor-list__history-bar--up]="state"
+                    [class.monitor-list__history-bar--down]="!state"
+                  ></span>
+                }
+
+                @for (placeholder of getHistoryPlaceholderBars(service.history); track placeholder) {
+                  <span class="monitor-list__history-bar monitor-list__history-bar--placeholder"></span>
+                }
+              </div>
+            </div>
+
+            @if (service.details && (service.details | keyvalue)?.length) {
+              <div class="monitor-list__actions">
+                <button
+                  type="button"
+                  class="monitor-list__details-btn"
+                  (click)="toggleDetails(service.name)"
+                >
+                  {{ expandedDetails()[service.name] ? 'Hide details' : 'Show details' }}
+                </button>
+              </div>
+            }
+
+            @if (expandedDetails()[service.name]) {
+              <div class="monitor-list__details">
+                <div class="monitor-list__details-title">All available details</div>
+
+                @for (detail of getDetailsSummary(service); track detail) {
+                  <div class="monitor-list__detail-item">{{ detail }}</div>
+                }
+              </div>
+            }
+
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+  </div>
 </div>

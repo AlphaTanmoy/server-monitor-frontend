@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.landing-screen {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(92, 214, 255, 0.34), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(120, 90, 255, 0.26), transparent 28%),
+    linear-gradient(135deg, #06131f, #0b1b30 45%, #101f3b);
+  color: #f8fbff;
+}
+
+.landing-screen__backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.landing-screen__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(circle at center, black 48%, transparent 92%);
+}
+
+.landing-screen__particle {
+  position: absolute;
+  border-radius: 0.45rem;
+  background: hsla(var(--particle-hue, 210), 95%, 72%, 0.65);
+  box-shadow: 0 0 20px rgba(108, 206, 255, 0.28);
+  opacity: 0.3;
+  animation: particle-flow linear infinite;
+}
+
+.landing-screen__content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1rem;
+  justify-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.landing-screen__tag {
+  margin: 0;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: #a6d7ff;
+}
+
+.landing-screen__title {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.05;
+  font-weight: 800;
+  max-width: 780px;
+}
+
+.landing-screen__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  padding: 0.9rem 1.4rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #8b5cf6, #38bdf8);
+  color: #f8fbff;
+  text-decoration: none;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.landing-screen__button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 34px rgba(88, 118, 255, 0.42);
+}
+
+@keyframes particle-flow {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg);
+    opacity: 0.15;
+  }
+  25% {
+    transform: translate3d(18px, -24px, 0) scale(1.1) rotate(4deg);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(-12px, 18px, 0) scale(0.95) rotate(-5deg);
+    opacity: 0.35;
+  }
+  75% {
+    transform: translate3d(24px, -14px, 0) scale(1.05) rotate(5deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(0.9) rotate(0deg);
+    opacity: 0.15;
+  }
+}

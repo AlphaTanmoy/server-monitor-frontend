@@ -16,9 +16,39 @@
     }
   </div>
 
+  @if (isBackendOffline()) {
+    <div class="landing-screen__red-overlay" aria-hidden="true"></div>
+
+    <div class="landing-screen__offline-panel" role="alert" aria-live="polite">
+      <p class="landing-screen__offline-label">Backend is down</p>
+      <h2 class="landing-screen__offline-title">Monitoring services are temporarily unavailable</h2>
+      <p class="landing-screen__offline-message">
+        The backend health check failed, so the live monitoring API cannot be reached right now.
+      </p>
+
+      <div class="landing-screen__service-icons" aria-label="Service icons">
+        @for (icon of serviceIcons; track icon) {
+          <img
+            class="landing-screen__service-icon"
+            [src]="getServiceLogo(icon)"
+            [alt]="icon"
+            loading="lazy"
+          />
+        }
+      </div>
+    </div>
+  }
+
   <div class="landing-screen__content">
     <p class="landing-screen__tag">Realtime health overview</p>
     <h1 class="landing-screen__title">Server Monitoring System</h1>
-    <a class="landing-screen__button" routerLink="/dashboard">Check Status</a>
+    <a
+      class="landing-screen__button"
+      [class.landing-screen__button--disabled]="isBackendOffline()"
+      [attr.aria-disabled]="isBackendOffline()"
+      routerLink="/dashboard"
+    >
+      Check Status
+    </a>
   </div>
 </section>

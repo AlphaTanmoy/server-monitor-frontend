@@ -268,7 +268,7 @@ export class Dashboard implements OnInit, OnDestroy {
       cpu: 'cpu.png',
       disk: 'storage.png',
       memory: 'memory.png',
-      'tesseract': 'Tessaract.png'
+      'tesseract': 'tessaract.png'
     };
 
     return `/${logoMap[normalizedName] ?? 'favicon.ico'}`;
